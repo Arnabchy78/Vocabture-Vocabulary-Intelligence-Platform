@@ -6,7 +6,7 @@ import { LoadingScreen } from './components/features/LoadingScreen';
 import { useState, useEffect } from 'react';
 import { AppShell } from './components/layout/AppShell';
 import { DashboardView } from './components/sections/DashboardView';
-import { FlashcardView } from './components/sections/FlashcardView';
+import {FlashCardView} from './components/sections/FlashCardView';
 import { SettingsModal } from './components/features/SettingsModal';
 import { PlaceholderView } from './components/sections/PlaceholderView';
 import { ProgressDashboard } from './components/features/ProgressDashboard';
