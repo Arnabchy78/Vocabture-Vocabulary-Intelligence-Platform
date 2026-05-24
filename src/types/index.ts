@@ -16,6 +16,7 @@ export interface WordTag {
 export interface WordDefinition {
   text: string;
   example: string;
+  example?: any;
 }
 
 export interface VocabWord {

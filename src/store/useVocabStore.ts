@@ -11,6 +11,7 @@ import { MOCK_WORDS } from '../data/mock';
 import { calculateSM2, DEFAULT_SM2, getDueWords } from '../utils/sm2';
 import type { ReviewQuality, SM2Data } from '../utils/sm2';
 import { useProgressStore } from './useProgressStore';
+import { WORD_DATABASE } from '../data/wordDatabase';
 import { WORD_BANK } from '../data/wordBank';
 import { fetchWord } from '../services/dictionaryApi';
 
@@ -133,54 +134,62 @@ export const useVocabStore = create<VocabState>()(
 
       // ── Discovery (fetch new words from WORD_BANK) ──
       discoverWords: async (count = 10) => {
-        if (get().isDiscovering) return 0;
-        set({ isDiscovering: true });
+  if (get().isDiscovering) return 0;
+  set({ isDiscovering: true });
 
-        try {
-          const existing = new Set(
-            get().words.map((w) => w.word.toLowerCase())
-          );
+  try {
+    const existing = new Set(
+      get().words.map((w) => w.word.toLowerCase())
+    );
 
-          // Pick random candidates from the bank that aren't already in vault
-          const candidates: string[] = [];
-          const maxTries = count * 5;
-          let tries = 0;
+    // First: pull from local database
+    const localCandidates = WORD_DATABASE
+      .filter((w) => !existing.has(w.word.toLowerCase()))
+      .sort(() => Math.random() - 0.5)
+      .slice(0, count);
 
-          while (candidates.length < count && tries < maxTries) {
-            const random =
-              WORD_BANK[Math.floor(Math.random() * WORD_BANK.length)];
-            if (!existing.has(random) && !candidates.includes(random)) {
-              candidates.push(random);
-            }
-            tries++;
-          }
+    if (localCandidates.length >= count) {
+      const added = get().addWords(localCandidates);
+      return added;
+    }
 
-          // Fetch them in parallel (concurrency = 5)
-          const fetched: VocabWord[] = [];
-          const queue = [...candidates];
+    // Fallback: fetch from API for remainder
+    const needed = count - localCandidates.length;
+    const candidates: string[] = [];
+    const maxTries = needed * 5;
+    let tries = 0;
 
-          async function worker() {
-            while (queue.length > 0) {
-              const w = queue.shift();
-              if (!w) continue;
-              const result = await fetchWord(w);
-              if (result) fetched.push(result);
-            }
-          }
+    while (candidates.length < needed && tries < maxTries) {
+      const random = WORD_BANK[Math.floor(Math.random() * WORD_BANK.length)];
+      if (!existing.has(random) && !candidates.includes(random)) {
+        candidates.push(random);
+      }
+      tries++;
+    }
 
-          await Promise.all(
-            Array.from({ length: 5 }, () => worker())
-          );
+    const fetched: VocabWord[] = [];
+    const queue = [...candidates];
 
-          const added = get().addWords(fetched);
-          return added;
-        } finally {
-          set({ isDiscovering: false });
-        }
-      },
+    async function worker() {
+      while (queue.length > 0) {
+        const w = queue.shift();
+        if (!w) continue;
+        const result = await fetchWord(w);
+        if (result) fetched.push(result);
+      }
+    }
 
+    await Promise.all(Array.from({ length: 5 }, () => worker()));
+
+    const added = get().addWords([...localCandidates, ...fetched]);
+    return added;
+  } finally {
+    set({ isDiscovering: false });
+  }
+}
+  
       // ── Study Actions ──
-      startStudySession: () => {
+     , startStudySession: () => {
         set({ isStudying: true, currentStudyIndex: 0, sessionResults: [] });
       },
 

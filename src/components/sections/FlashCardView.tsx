@@ -14,7 +14,7 @@ interface FlashcardViewProps {
   onExit: () => void;
 }
 
-export const FlashcardView: React.FC<FlashcardViewProps> = ({ onExit }) => {
+export const FlashCardView: React.FC<FlashcardViewProps> = ({ onExit }) => {
   const {
     getDueWords,
     reviewWord,
@@ -323,6 +323,7 @@ const CardFace: React.FC<CardFaceProps> = ({ side, word, onSpeak }) => {
           </p>
 
           {word.definition.example && (
+          
             <div className="border-l-2 border-[#3d2b1f] pl-3">
               <div className="flex items-start justify-between gap-2">
                 <p className="font-mono text-xs text-[#6b4f3a] italic leading-relaxed flex-1">

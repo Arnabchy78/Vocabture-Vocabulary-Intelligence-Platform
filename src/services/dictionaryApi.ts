@@ -167,9 +167,11 @@ export async function fetchWord(searchTerm: string): Promise<VocabWord | null> {
       partOfSpeech: pos,
       definition: {
         text: firstDef.definition,
-        example:
-          firstDef.example ||
-          `Use "${displayWord.toLowerCase()}" in your own sentence to remember it.`,
+        example: firstDef.example?.toLowerCase().includes('in your own sentence') || 
+         firstDef.example?.toLowerCase().includes('use "')
+  ? ''
+  : firstDef.example || ''
+      
       },
       etymology: origin || `Etymology data not available for "${displayWord}".`,
       synonyms: Array.from(allSynonyms).slice(0, 4),
@@ -221,10 +223,9 @@ export async function fetchWordWithAudio(
   }
 }
 
-// ─────────────────────────────────────────────
+
 //  Batch fetch with concurrency limit
 //  Useful for seeding many words at once
-// ─────────────────────────────────────────────
 export async function fetchWordsBatch(
   words: string[],
   concurrency = 5

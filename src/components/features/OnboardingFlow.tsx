@@ -104,7 +104,7 @@ export function OnboardingFlow({ onComplete, onNavigate }: OnboardingFlowProps) 
                   className="text-3xl md:text-4xl font-bold gradient-text-orange mb-2"
                   style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                 >
-                  Welcome to LexiQ
+                  Welcome to Vocabture
                 </h1>
                 <p className="text-base text-gray-300">
                   Vocabulary mastery, gamified.

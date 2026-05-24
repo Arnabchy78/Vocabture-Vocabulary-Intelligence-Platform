@@ -350,7 +350,8 @@ export const StudyView: React.FC<StudyViewProps> = ({ onBack }) => {
             <p className="text-white font-mono text-base leading-relaxed">
               {currentWord.definition.text}
             </p>
-            {currentWord.definition.example && (
+            {currentWord.definition.example && !currentWord.definition.example.toLowerCase().includes('use "') && 
+(
               <p className="text-zinc-400 font-mono text-sm italic mt-2">
                 "{currentWord.definition.example}"
               </p>

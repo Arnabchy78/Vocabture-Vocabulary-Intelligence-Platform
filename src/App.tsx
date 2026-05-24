@@ -6,7 +6,7 @@ import { LoadingScreen } from './components/features/LoadingScreen';
 import { useState, useEffect } from 'react';
 import { AppShell } from './components/layout/AppShell';
 import { DashboardView } from './components/sections/DashboardView';
-import {FlashCardView} from './components/sections/FlashCardView';
+import { FlashCardView } from './components/sections/FlashCardView';
 import { SettingsModal } from './components/features/SettingsModal';
 import { PlaceholderView } from './components/sections/PlaceholderView';
 import { ProgressDashboard } from './components/features/ProgressDashboard';
@@ -101,7 +101,7 @@ export default function App() {
   }
 
   if (isStudying) {
-    return <FlashcardView onExit={handleExitStudy} />;
+    return <FlashCardView onExit={handleExitStudy} />;
   }
 
   const renderGames = () => {
